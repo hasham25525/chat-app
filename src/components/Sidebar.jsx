@@ -7,7 +7,17 @@ import {
   PeopleAlt,
   SearchOutlined,
 } from "@mui/icons-material";
-import { Avatar, IconButton } from "@mui/material";
+import {
+  Avatar,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
+  TextField,
+} from "@mui/material";
 import { useState } from "react";
 import SidebarTab from "./SidebarTab";
 import SidebarList from "./SidebarList";
@@ -29,6 +39,9 @@ const tabs = [
 
 export default function Sidebar({ user }) {
   const [menu, setMenu] = useState(1);
+  const [roomName, setRoomName] = useState("second");
+  const [isCreatingRoom, setIsCreatingRoom] = useState(false);
+
   const data = [
     {
       id: 1,
@@ -38,6 +51,10 @@ export default function Sidebar({ user }) {
     },
   ];
 
+  async function createRoom() {
+    console.log(roomName);
+    setIsCreatingRoom(false)
+  }
   return (
     <div className="sidebar">
       {/* Sidebar */}
@@ -68,32 +85,69 @@ export default function Sidebar({ user }) {
       {/* Menu */}
       <div className="sidebar__menu">
         {tabs.map((tab) => (
-          <SidebarTab key={tab.id} onClick={() => setMenu(tab.id)} isActive={tab.id== menu}>
+          <SidebarTab
+            key={tab.id}
+            onClick={() => setMenu(tab.id)}
+            isActive={tab.id == menu}
+          >
             <div className="sidebar__menu--home">
-                {tab.icon}
-                <div className="sidebar__menu--line"></div>
+              {tab.icon}
+              <div className="sidebar__menu--line"></div>
             </div>
           </SidebarTab>
         ))}
       </div>
 
-{menu === 1 ? (
-  <SidebarList title='Chats' data={data}/>
-) : menu===2 ? (
-  <SidebarList title='Rooms' data={data}/>
-) : menu===3 ? (
-  <SidebarList title='Users' data={data}/>
-) : menu===4 ? (
-  <SidebarList title='Search Results' data={data}/>
-) : null
-}
+      {menu === 1 ? (
+        <SidebarList title="Chats" data={data} />
+      ) : menu === 2 ? (
+        <SidebarList title="Rooms" data={data} />
+      ) : menu === 3 ? (
+        <SidebarList title="Users" data={data} />
+      ) : menu === 4 ? (
+        <SidebarList title="Search Results" data={data} />
+      ) : null}
 
       {/* Create Room Button */}
       <div className="sidebar__chat--addRoom">
-        <IconButton>
+        <IconButton onClick={() => setIsCreatingRoom(true)}>
           <Add />
         </IconButton>
       </div>
+
+      {/* Create Room Dialog */}
+      <Dialog
+        maxWidth="xs"
+        open={isCreatingRoom}
+        onClose={() => setIsCreatingRoom(false)}
+      >
+        <DialogTitle>Create New Room</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Type the name of the public room. Every user will be able to join
+            this room.
+          </DialogContentText>
+          <TextField
+            onChange={(e) => {
+              setRoomName(e.target.value);
+            }}
+            value={roomName}
+            autoFocus
+            margin="normal"
+            id="roomName"
+            label="Room Name"
+            type="text"
+            fullWidth
+            variant="standard"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsCreatingRoom(false)}>Cancel</Button>
+          <Button onClick={() => createRoom()} color="success">
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }
