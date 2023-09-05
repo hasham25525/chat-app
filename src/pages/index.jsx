@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <>
      {
-      !user ?  <Login /> : (
+      !user ?  <Login/> : (
         <div className="app">
           <div className="app__body">
             <Sidebar user={user}/>
