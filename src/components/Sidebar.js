@@ -1,7 +1,42 @@
-import { Add, ExitToApp, SearchOutlined } from "@mui/icons-material";
+"use client";
+import {
+  Add,
+  ExitToApp,
+  Home,
+  Message,
+  PeopleAlt,
+  SearchOutlined,
+} from "@mui/icons-material";
 import { Avatar, IconButton } from "@mui/material";
+import { useState } from "react";
+import SidebarTab from "./SidebarTab";
+
+const tabs = [
+  {
+    id: 1,
+    icon: <Home />,
+  },
+  {
+    id: 2,
+    icon: <Message />,
+  },
+  {
+    id: 3,
+    icon: <PeopleAlt />,
+  },
+];
 
 export default function Sidebar({ user }) {
+  const [menu, setMenu] = useState(1);
+  const data = [
+    {
+      id: 1,
+      name: "Hasham",
+      photoURL:
+        "https://lh3.googleusercontent.com/a/AAcHTtcJ0Nn-pfb-hsK59x1GoCwHDPNCbUKSUNMdmE_0Uy5oLuCu=s96-c",
+    },
+  ];
+
   return (
     <div className="sidebar">
       {/* Sidebar */}
@@ -29,10 +64,22 @@ export default function Sidebar({ user }) {
         </from>
       </div>
 
+      {/* Menu */}
+      <div className="sidebar__menu">
+        {tabs.map((tab) => (
+          <SidebarTab key={tab.id} onClick={() => setMenu(tab.id)} isActive={tab.id== menu}>
+            <div className="sidebar__menu--home">
+                {tab.icon}
+                <div className="sidebar__menu--line"></div>
+            </div>
+          </SidebarTab>
+        ))}
+      </div>
+
       {/* Create Room Button */}
       <div className="sidebar__chat--addRoom">
         <IconButton>
-            <Add/>
+          <Add />
         </IconButton>
       </div>
     </div>

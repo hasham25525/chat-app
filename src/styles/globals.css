@@ -360,10 +360,12 @@ em {
   height: 3px;
   background: #0000008a;
   margin-top: 5px;
+  transition: all 0.2s;
 }
 
 .sidebar__menu > .sidebar__menu--selected > div > .sidebar__menu--line {
   opacity: 1;
+  transition: all 0.2s;
 }
 
 .sidebar__chat--container {
