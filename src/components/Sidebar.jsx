@@ -43,7 +43,7 @@ const tabs = [
 export default function Sidebar({ user }) {
   const router = useRouter();
   const [menu, setMenu] = useState(1);
-  const [roomName, setRoomName] = useState("second");
+  const [roomName, setRoomName] = useState("");
   const [isCreatingRoom, setIsCreatingRoom] = useState(false);
  const rooms = useRooms();
 
