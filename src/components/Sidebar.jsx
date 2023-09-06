@@ -25,6 +25,7 @@ import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { useRouter } from "next/router";
 import { auth, db } from "@/utils/firebase";
 import useRooms from "@/hooks/useRooms";
+import useUsers from "@/hooks/useUsers";
 const tabs = [
   {
     id: 1,
@@ -45,7 +46,9 @@ export default function Sidebar({ user }) {
   const [menu, setMenu] = useState(1);
   const [roomName, setRoomName] = useState("");
   const [isCreatingRoom, setIsCreatingRoom] = useState(false);
- const rooms = useRooms();
+  
+  const rooms = useRooms();
+  const users = useUsers(user);
 
   const data = [
     {
@@ -117,7 +120,7 @@ export default function Sidebar({ user }) {
       ) : menu === 2 ? (
         <SidebarList title="Rooms" data={rooms} />
       ) : menu === 3 ? (
-        <SidebarList title="Users" data={data} />
+        <SidebarList title="Users" data={users} />
       ) : menu === 4 ? (
         <SidebarList title="Search Results" data={data} />
       ) : null}
