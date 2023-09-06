@@ -24,7 +24,7 @@ import SidebarList from "./SidebarList";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { useRouter } from "next/router";
 import { auth, db } from "@/utils/firebase";
-
+import useRooms from "@/hooks/useRooms";
 const tabs = [
   {
     id: 1,
@@ -45,6 +45,7 @@ export default function Sidebar({ user }) {
   const [menu, setMenu] = useState(1);
   const [roomName, setRoomName] = useState("second");
   const [isCreatingRoom, setIsCreatingRoom] = useState(false);
+ const rooms = useRooms();
 
   const data = [
     {
@@ -78,7 +79,7 @@ export default function Sidebar({ user }) {
         </div>
         <div className="sidebar__header--right">
           <IconButton>
-            <ExitToApp onClick={()=>auth.signOut()}/>
+            <ExitToApp onClick={() => auth.signOut()} />
           </IconButton>
         </div>
       </div>
@@ -114,7 +115,7 @@ export default function Sidebar({ user }) {
       {menu === 1 ? (
         <SidebarList title="Chats" data={data} />
       ) : menu === 2 ? (
-        <SidebarList title="Rooms" data={data} />
+        <SidebarList title="Rooms" data={rooms} />
       ) : menu === 3 ? (
         <SidebarList title="Users" data={data} />
       ) : menu === 4 ? (
