@@ -21,6 +21,9 @@ import {
 import { useState } from "react";
 import SidebarTab from "./SidebarTab";
 import SidebarList from "./SidebarList";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { useRouter } from "next/router";
+import { auth, db } from "@/utils/firebase";
 
 const tabs = [
   {
@@ -38,6 +41,7 @@ const tabs = [
 ];
 
 export default function Sidebar({ user }) {
+  const router = useRouter();
   const [menu, setMenu] = useState(1);
   const [roomName, setRoomName] = useState("second");
   const [isCreatingRoom, setIsCreatingRoom] = useState(false);
@@ -52,12 +56,21 @@ export default function Sidebar({ user }) {
   ];
 
   async function createRoom() {
-    console.log(roomName);
-    setIsCreatingRoom(false)
+    if (roomName?.trim()) {
+      const roomsRef = collection(db, "rooms");
+      const newRoom = await addDoc(roomsRef, {
+        name: roomName,
+        timestamp: serverTimestamp(),
+      });
+      setIsCreatingRoom(false);
+      setRoomName("");
+      setMenu(2);
+      router.push(`/?roomId=${newRoom.id}`);
+    }
   }
   return (
     <div className="sidebar">
-      {/* Sidebar */}
+      {/* Header */}
       <div className="sidebar__header">
         <div className="sidebar__header--left">
           <Avatar src={user?.photoURL} alt={user?.displayname} />
