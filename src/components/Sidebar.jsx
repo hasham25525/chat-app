@@ -26,6 +26,7 @@ import { useRouter } from "next/router";
 import { auth, db } from "@/utils/firebase";
 import useRooms from "@/hooks/useRooms";
 import useUsers from "@/hooks/useUsers";
+import useChats from "@/hooks/useChats";
 const tabs = [
   {
     id: 1,
@@ -49,6 +50,7 @@ export default function Sidebar({ user }) {
   
   const rooms = useRooms();
   const users = useUsers(user);
+  const chats = useChats(user)
 
   const data = [
     {
@@ -116,7 +118,7 @@ export default function Sidebar({ user }) {
       </div>
 
       {menu === 1 ? (
-        <SidebarList title="Chats" data={data} />
+        <SidebarList title="Chats" data={chats} />
       ) : menu === 2 ? (
         <SidebarList title="Rooms" data={rooms} />
       ) : menu === 3 ? (
