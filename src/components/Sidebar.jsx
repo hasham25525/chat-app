@@ -78,7 +78,7 @@ export default function Sidebar({ user }) {
         </div>
         <div className="sidebar__header--right">
           <IconButton>
-            <ExitToApp />
+            <ExitToApp onClick={()=>auth.signOut()}/>
           </IconButton>
         </div>
       </div>
