@@ -4,7 +4,7 @@ const { default: Link } = require("next/link");
 
 const SidebarListItems = ({ item }) => {
   return (
-    <Link className="link" href={`/?roomID=${item.id}`}>
+    <Link className="link" href={`/?roomId=${item.id}`}>
       <div className="sidebar__chat">
         <div className="avatar__container">
           <Avatar
