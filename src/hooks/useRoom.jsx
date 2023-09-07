@@ -9,7 +9,6 @@ export default function useRoom(roomId, userId) {
   const [snapshot] = useDocument(
     docId ? doc(db, `${collectionId}/${docId}`) : null
   );
-//   console.log(snapshot);  not getting snapshot
   if (!snapshot?.exists()) return null;
   return {
     id: snapshot.id,
