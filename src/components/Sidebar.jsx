@@ -21,7 +21,14 @@ import {
 import { useState } from "react";
 import SidebarTab from "./SidebarTab";
 import SidebarList from "./SidebarList";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  query,
+  serverTimestamp,
+  where,
+} from "firebase/firestore";
 import { useRouter } from "next/router";
 import { auth, db } from "@/utils/firebase";
 import useRooms from "@/hooks/useRooms";
@@ -47,19 +54,11 @@ export default function Sidebar({ user }) {
   const [menu, setMenu] = useState(1);
   const [roomName, setRoomName] = useState("");
   const [isCreatingRoom, setIsCreatingRoom] = useState(false);
-  
+  const [searchResults, setSearchResults] = useState([]);
+
   const rooms = useRooms();
   const users = useUsers(user);
-  const chats = useChats(user)
-
-  const data = [
-    {
-      id: 1,
-      name: "Hasham",
-      photoURL:
-        "https://lh3.googleusercontent.com/a/AAcHTtcJ0Nn-pfb-hsK59x1GoCwHDPNCbUKSUNMdmE_0Uy5oLuCu=s96-c",
-    },
-  ];
+  const chats = useChats(user);
 
   async function createRoom() {
     if (roomName?.trim()) {
@@ -74,6 +73,38 @@ export default function Sidebar({ user }) {
       router.push(`/?roomId=${newRoom.id}`);
     }
   }
+
+  async function searchUsersAndRooms(event) {
+    event.preventDefault();
+    const searchValue = event.target.elements.search.value;
+    const userQuery = query(
+      collection(db, "users"),
+      where("name", "==", searchValue)
+    );
+    const roomsQuery = query(
+      collection(db, "rooms"),
+      where("name", "==", searchValue)
+    );
+    const userSnapshot = await getDocs(userQuery);
+    const roomsSnapshot = await getDocs(roomsQuery);
+
+    const userResults = userSnapshot?.docs.map((doc) => {
+      const id =
+        doc.id > user.uid ? `${doc.id}${user.uid}` : `${user.uid}${doc.id}`;
+
+      return { id, ...doc.data() };
+    });
+
+    const roomsResults = roomsSnapshot?.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    const searchResults = [...userResults, ...roomsResults];
+    setMenu(4);
+    setSearchResults(searchResults);
+  }
+
   return (
     <div className="sidebar">
       {/* Header */}
@@ -90,16 +121,17 @@ export default function Sidebar({ user }) {
       </div>
 
       {/* Search */}
-      <div className="sidebar__search">
-        <from className="sidebar__search--container">
-          <SearchOutlined />
+      <div className="sidebar__search" >
+        <form  className="sidebar__search--container" onSubmit={searchUsersAndRooms}>
+        <SearchOutlined />
           <input
             type="text"
             placeholder="Search for users or rooms"
             id="search"
           />
-        </from>
+        </form>
       </div>
+
 
       {/* Menu */}
       <div className="sidebar__menu">
@@ -124,7 +156,7 @@ export default function Sidebar({ user }) {
       ) : menu === 3 ? (
         <SidebarList title="Users" data={users} />
       ) : menu === 4 ? (
-        <SidebarList title="Search Results" data={data} />
+        <SidebarList title="Search Results" data={searchResults} />
       ) : null}
 
       {/* Create Room Button */}
