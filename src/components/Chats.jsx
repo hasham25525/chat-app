@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import useRoom from "src/hooks/useRoom";
 import MediaPreview from "./MediaPreview";
 import { useState } from "react";
+import ChatFooter from "./ChatFooter";
 
 export default function Chats({ user }) {
   const router = useRouter();
@@ -27,10 +28,10 @@ export default function Chats({ user }) {
     }
   }
 
-function closePreview(){
-  setSrc('')
-  setImage(null)
-}
+  function closePreview() {
+    setSrc("");
+    setImage(null);
+  }
 
   if (!room) return null;
 
@@ -70,6 +71,7 @@ function closePreview(){
         </div>
       </div>
       <MediaPreview src={src} closePreview={closePreview} />
+      <ChatFooter />
     </div>
   );
 }
