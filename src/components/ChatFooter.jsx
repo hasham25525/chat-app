@@ -15,7 +15,7 @@ const ChatFooter = ({
   sendMessage,
 }) => {
   const canRecord = true;
-  const isRecording = true;
+  const isRecording = false;
   const canSendMessage = input.trim() || (input === "" && image);
   const recordIcons = (
     <>
@@ -35,7 +35,7 @@ const ChatFooter = ({
             width: isRecording ? "calc(100% - 20px)" : "calc(100% - 112px)",
           }}
         />
-        
+
         {canRecord ? (
           <button
             onClick={canSendMessage ? sendMessage : () => null}

@@ -12,8 +12,11 @@ import {
   doc,
   serverTimestamp,
   setDoc,
+  updateDoc,
 } from "firebase/firestore";
-import { db } from "@/utils/firebase";
+import { db, storage } from "@/utils/firebase";
+import Compressor from "compressorjs";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 export default function Chats({ user }) {
   const router = useRouter();
@@ -50,13 +53,13 @@ export default function Chats({ user }) {
     if (image) closePreview();
     const imageName = nanoid();
 
-    await setDoc(doc(db, `user/${userId}/chats/${roomId}`), {
+    await setDoc(doc(db, `users/${userId}/chats/${roomId}`), {
       name: room.name,
       photoURL: room.photoURL || null,
       timestamp: serverTimestamp(),
     });
 
-    await addDoc(collection(db, `rooms/${roomId}/messages`), {
+    const newDoc = await addDoc(collection(db, `rooms/${roomId}/messages`), {
       name: user.displayName,
       message: input,
       uid: user.uid,
@@ -64,6 +67,21 @@ export default function Chats({ user }) {
       time: new Date().toUTCString(),
       ...(image ? { imageUrl: "uploading", imageName } : {}),
     });
+    if (image) {
+      new Compressor(image, {
+        quality: 0.8,
+        maxWidth: 1920,
+        async success(result) {
+          setSrc("");
+          setImage(null);
+          await uploadBytes(ref(storage, `images/${imageName}`), result);
+          const url = await getDownloadURL(ref(storage, `images/${imageName}`));
+          await updateDoc(doc(db, `rooms/${roomId}/messages/${newDoc.id}`), {
+            imageUrl: url,
+          });
+        },
+      });
+    }
   }
 
   if (!room) return null;
