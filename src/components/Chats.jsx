@@ -3,12 +3,22 @@ import { Avatar, IconButton, Menu, MenuItem } from "@mui/material";
 import { useRouter } from "next/router";
 import useRoom from "src/hooks/useRoom";
 import MediaPreview from "./MediaPreview";
-import { useState } from "react";
+import { use, useState } from "react";
 import ChatFooter from "./ChatFooter";
+import { nanoid } from "nanoid";
+import {
+  addDoc,
+  collection,
+  doc,
+  serverTimestamp,
+  setDoc,
+} from "firebase/firestore";
+import { db } from "@/utils/firebase";
 
 export default function Chats({ user }) {
   const router = useRouter();
   const [image, setImage] = useState(null);
+  const [input, setInput] = useState("");
   const [src, setSrc] = useState("");
 
   const roomId = router.query.roomId ?? "";
@@ -31,6 +41,29 @@ export default function Chats({ user }) {
   function closePreview() {
     setSrc("");
     setImage(null);
+  }
+
+  async function sendMessage(e) {
+    e.preventDefault();
+
+    setInput("");
+    if (image) closePreview();
+    const imageName = nanoid();
+
+    await setDoc(doc(db, `user/${userId}/chats/${roomId}`), {
+      name: room.name,
+      photoURL: room.photoURL || null,
+      timestamp: serverTimestamp(),
+    });
+
+    await addDoc(collection(db, `rooms/${roomId}/messages`), {
+      name: user.displayName,
+      message: input,
+      uid: user.uid,
+      timestamp: serverTimestamp(),
+      time: new Date().toUTCString(),
+      ...(image ? { imageUrl: "uploading", imageName } : {}),
+    });
   }
 
   if (!room) return null;
@@ -71,7 +104,15 @@ export default function Chats({ user }) {
         </div>
       </div>
       <MediaPreview src={src} closePreview={closePreview} />
-      <ChatFooter />
+      <ChatFooter
+        input={input}
+        onChange={(e) => setInput(e.target.value)}
+        image={image}
+        user={user}
+        room={room}
+        roomId={roomId}
+        sendMessage={sendMessage}
+      />
     </div>
   );
 }
