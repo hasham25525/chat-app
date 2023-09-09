@@ -17,6 +17,8 @@ import {
 import { db, storage } from "@/utils/firebase";
 import Compressor from "compressorjs";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import useChatMessages from "@/hooks/useChatMessages";
+import ChatMessages from "./ChatMessages";
 
 export default function Chats({ user }) {
   const router = useRouter();
@@ -27,7 +29,7 @@ export default function Chats({ user }) {
   const roomId = router.query.roomId ?? "";
   const userId = user.uid;
   const room = useRoom(roomId, userId);
-  console.log(room);
+  const messages = useChatMessages(roomId);
 
   function showPreview(e) {
     const file = e?.target?.files[0];
@@ -121,6 +123,13 @@ export default function Chats({ user }) {
           </Menu>
         </div>
       </div>
+
+      <div className="chat__body--container">
+        <div className="chat__body">
+          <ChatMessages messages={messages} user={user} roomId={roomId} />
+        </div>
+      </div>
+
       <MediaPreview src={src} closePreview={closePreview} />
       <ChatFooter
         input={input}
