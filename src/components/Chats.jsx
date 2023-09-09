@@ -25,6 +25,7 @@ export default function Chats({ user }) {
   const [image, setImage] = useState(null);
   const [input, setInput] = useState("");
   const [src, setSrc] = useState("");
+  const [audioId, setAudioId] = useState("");
 
   const roomId = router.query.roomId ?? "";
   const userId = user.uid;
@@ -126,7 +127,13 @@ export default function Chats({ user }) {
 
       <div className="chat__body--container">
         <div className="chat__body">
-          <ChatMessages messages={messages} user={user} roomId={roomId} />
+          <ChatMessages
+            messages={messages}
+            user={user}
+            roomId={roomId}
+            audioId={audioId}
+            setAudioId={setAudioId}
+          />
         </div>
       </div>
 
@@ -139,6 +146,7 @@ export default function Chats({ user }) {
         room={room}
         roomId={roomId}
         sendMessage={sendMessage}
+        setAudioId={setAudioId}
       />
     </div>
   );

@@ -1,9 +1,11 @@
+import recordAudio from "@/utils/recordAudio";
 import {
   CancelRounded,
   CheckCircleRounded,
   MicRounded,
   Send,
 } from "@mui/icons-material";
+import { useEffect, useRef, useState } from "react";
 
 const ChatFooter = ({
   input,
@@ -13,9 +15,16 @@ const ChatFooter = ({
   room,
   roomId,
   sendMessage,
+  setAudioId,
 }) => {
-  const canRecord = true;
-  const isRecording = false;
+  const record = useRef();
+  const [isRecording, setRecording] = useState(false);
+
+  const timerInterval = useRef();
+  const [duration, setDuration] = useState("00:00");
+
+  const canRecord =
+    !!navigator.mediaDevices.getUserMedia && !!window.MediaRecorder;
   const canSendMessage = input.trim() || (input === "" && image);
   const recordIcons = (
     <>
@@ -23,6 +32,38 @@ const ChatFooter = ({
       <MicRounded style={{ width: 24, height: 24, color: "white" }} />
     </>
   );
+
+  useEffect(() => {
+    if (isRecording) {
+      record.current.start();
+      startTimer();
+    }
+
+    function pad(value) {
+      return value < 10 ? "0" + value : "" + value; // add zero in front of numbers < 10
+    }
+
+    function startTimer() {
+      const start = Date.now();
+      timerInterval.current = setInterval(setTime, 100);
+
+      function setTime() {
+        const timeElapsed = Date.now() - start;
+        const totalSeconds = Math.floor(timeElapsed / 1000);
+        const minutes = pad(parseInt(totalSeconds / 60));
+        const seconds = pad(parseInt(totalSeconds % 60));
+        const duration = `${minutes}:${seconds}`;
+        setDuration(duration);
+      }
+    }
+  }, [isRecording]);
+
+  async function startRecording(e) {
+    e.preventDefault();
+    record.current = await recordAudio();
+    setRecording(true);
+    setAudioId("");
+  }
 
   return (
     <div className="chat__footer">
@@ -38,7 +79,7 @@ const ChatFooter = ({
 
         {canRecord ? (
           <button
-            onClick={canSendMessage ? sendMessage : () => null}
+            onClick={canSendMessage ? sendMessage : startRecording}
             type="submit"
             className="send__btn"
           >
@@ -64,7 +105,7 @@ const ChatFooter = ({
           <CancelRounded style={{ width: 30, height: 30, color: "#f20519" }} />
           <div>
             <div className="record__redcircle" />
-            <div className="record__duration">0:00</div>
+            <div className="record__duration">{duration}</div>
           </div>
           <CheckCircleRounded
             style={{ width: 30, height: 30, color: "#41bf49" }}
