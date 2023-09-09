@@ -65,6 +65,13 @@ const ChatFooter = ({
     setAudioId("");
   }
 
+  function stopRecording() {
+    clearInterval(timerInterval.current);
+    setRecording(false);
+    record.current.stop();
+    setDuration("00:00");
+  }
+
   return (
     <div className="chat__footer">
       <form action="">
@@ -102,7 +109,7 @@ const ChatFooter = ({
       </form>
       {isRecording && (
         <div className="record">
-          <CancelRounded style={{ width: 30, height: 30, color: "#f20519" }} />
+          <CancelRounded onClick={stopRecording} style={{ width: 30, height: 30, color: "#f20519" }} />
           <div>
             <div className="record__redcircle" />
             <div className="record__duration">{duration}</div>
