@@ -3,7 +3,7 @@ import { Avatar, IconButton, Menu, MenuItem } from "@mui/material";
 import { useRouter } from "next/router";
 import useRoom from "src/hooks/useRoom";
 import MediaPreview from "./MediaPreview";
-import { use, useState } from "react";
+import {  useState } from "react";
 import ChatFooter from "./ChatFooter";
 import { nanoid } from "nanoid";
 import {
