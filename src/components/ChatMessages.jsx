@@ -35,7 +35,14 @@ export default function ChatMessages({
 
         {/* if message is audio */}
         {message.audioName ? (
-          <div />
+          <AudioPlayer
+            sender={isSender}
+            roomId={roomId}
+            id={message.id}
+            audioUrl={message.audioUrl}
+            audioId={audioId}
+            setAudioId={setAudioId}
+          />
         ) : (
           <span className="chat__message--message">{message.message}</span>
         )}
