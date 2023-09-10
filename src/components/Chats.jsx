@@ -142,7 +142,7 @@ export default function Chats({ user }) {
 
   return (
     <div className="chat">
-      <div className="chat__backgroud" />
+      <div className="chat__background" />
 
       {/* chat header */}
       <div className="chat__header">
