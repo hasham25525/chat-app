@@ -9,8 +9,10 @@ export default function Home() {
     <>
      {
       !user ?  <Login/> : (
-        <div className="app">
-          <div className="app__body">
+        <div className="app ">
+          <div className="app__body ">
+           < div className="login__background"/>
+
             <Sidebar user={user}/>
             <Chats user={user}/>
           </div>
