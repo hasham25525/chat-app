@@ -8,7 +8,7 @@ export default function useChatMessages(roomId) {
       ? query(
           collection(db, `rooms/${roomId}/messages`),
           orderBy("timestamp", "asc")
-        )
+        ) 
       : null
   );
   const messages = snapshot?.docs.map((doc) => ({
