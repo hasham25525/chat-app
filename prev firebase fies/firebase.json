@@ -4,6 +4,8 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
+    
+    "site": "epic-chat",
     "public": "out",
     "ignore": [
       "firebase.json",
